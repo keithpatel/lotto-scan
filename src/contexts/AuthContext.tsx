@@ -16,22 +16,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for redirect result errors (e.g. unauthorized domains)
-    getRedirectResult(auth).catch((error) => {
-      console.error('Redirect sign in error:', error);
-      if (error.code === 'auth/unauthorized-domain') {
-        alert('This domain is not authorized for OAuth operations for your Firebase project. Please add your Vercel domain to the Authorized domains list in the Firebase Console -> Authentication -> Settings -> Authorized domains.');
-      } else {
-        alert('Sign in failed: ' + error.message);
-      }
-    });
+    let unsubscribe: (() => void) | undefined;
 
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
-    });
+    // First, check if we're returning from a redirect sign-in (mobile flow).
+    // getRedirectResult resolves with the signed-in user after the page reloads.
+    // We must await this BEFORE relying on onAuthStateChanged, otherwise the
+    // loading state finishes before the redirect user is captured, causing
+    // the login screen to flash again on mobile.
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          // Redirect sign-in succeeded — set user immediately
+          setUser(result.user);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect sign in error:', error);
+        if (error.code === 'auth/unauthorized-domain') {
+          alert('This domain is not authorized for OAuth operations for your Firebase project. Please add your Vercel domain to the Authorized domains list in the Firebase Console -> Authentication -> Settings -> Authorized domains.');
+        }
+      })
+      .finally(() => {
+        // Always subscribe to auth state changes as the long-term listener.
+        // This handles: returning users with persisted sessions, popup sign-in,
+        // sign-out, and token refresh.
+        unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+          setUser(firebaseUser);
+          setLoading(false);
+        });
+      });
 
-    return unsubscribe;
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const signIn = async () => {
