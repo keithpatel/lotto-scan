@@ -1,0 +1,127 @@
+{
+  "entities": {
+    "Pack": {
+      "title": "Pack",
+      "description": "Scratcher pack inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "game": { "type": "string" },
+        "price": { "type": "number" },
+        "pack": { "type": "string" },
+        "status": { "type": "string", "enum": ["Backstock", "Active", "Sold Out", "Missing"] },
+        "location": { "type": "string" },
+        "activatedAt": { "type": "string" },
+        "totalTickets": { "type": "number" },
+        "currentTicket": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "game", "price", "pack", "status", "location", "activatedAt", "totalTickets", "currentTicket", "createdAt"]
+    },
+    "AuditDetail": {
+      "title": "AuditDetail",
+      "description": "Details of an individual pack audited",
+      "type": "object",
+      "properties": {
+        "packId": { "type": "string" },
+        "game": { "type": "string" },
+        "startTicket": { "type": "number" },
+        "endTicket": { "type": "number" },
+        "sold": { "type": "number" },
+        "revenue": { "type": "number" }
+      },
+      "required": ["packId", "game", "startTicket", "endTicket", "sold", "revenue"]
+    },
+    "AuditRecord": {
+      "title": "AuditRecord",
+      "description": "Record of a shift audit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "employee": { "type": "string" },
+        "shift": { "type": "string" },
+        "status": { "type": "string", "enum": ["Flagged", "Clean"] },
+        "discrepancies": { "type": "number" },
+        "salesCalculated": { "type": "number" },
+        "netDue": { "type": "number" },
+        "totalCash": { "type": "number" },
+        "details": {
+          "type": "array",
+          "items": { "$ref": "#/entities/AuditDetail" }
+        },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "date", "employee", "shift", "status", "discrepancies", "salesCalculated", "createdAt"]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "Store employees",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "name", "role", "createdAt"]
+    },
+    "Shift": {
+      "title": "Shift",
+      "description": "Employee shift tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "employeeName": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Completed"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "employeeId", "employeeName", "startTime", "status", "createdAt"]
+    },
+    "DayClose": {
+      "title": "Day Close",
+      "description": "Daily closing records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "date": { "type": "string" },
+        "totalShiftSales": { "type": "number" },
+        "totalNetDue": { "type": "number" },
+        "overallDayCash": { "type": "number" },
+        "shiftsCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "date", "totalShiftSales", "totalNetDue", "overallDayCash", "shiftsCount", "createdAt"]
+    }
+  },
+  "firestore": {
+    "packs/{packId}": {
+      "schema": "#/entities/Pack",
+      "description": "Scratcher packs collection"
+    },
+    "audits/{auditId}": {
+      "schema": "#/entities/AuditRecord",
+      "description": "Audit records collection"
+    },
+    "employees/{employeeId}": {
+      "schema": "#/entities/Employee",
+      "description": "Employee collection"
+    },
+    "shifts/{shiftId}": {
+      "schema": "#/entities/Shift",
+      "description": "Shift records collection"
+    },
+    "day_closes/{dayCloseId}": {
+      "schema": "#/entities/DayClose",
+      "description": "Daily close records"
+    }
+  }
+}

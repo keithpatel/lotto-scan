@@ -1,0 +1,188 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { 
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+
+    function isValidPack(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'game', 'price', 'pack', 'status', 'location', 'activatedAt', 'totalTickets', 'currentTicket', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.game is string
+        && data.game.size() <= 200
+        && data.price is number
+        && data.pack is string
+        && data.pack.size() <= 50
+        && data.status in ["Backstock", "Active", "Sold Out", "Missing"]
+        && data.location is string
+        && data.activatedAt is string
+        && data.totalTickets is number
+        && data.currentTicket is number
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    function isValidAuditRecord(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'date', 'employee', 'shift', 'status', 'discrepancies', 'salesCalculated', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.date is string
+        && data.employee is string
+        && data.employee.size() <= 100
+        && data.shift is string
+        && data.status in ["Flagged", "Clean"]
+        && data.discrepancies is number
+        && data.salesCalculated is number
+        && (!('netDue' in data.keys()) || data.netDue is number)
+        && (!('totalCash' in data.keys()) || data.totalCash is number)
+        && (!('details' in data.keys()) || data.details is list && data.details.size() <= 100)
+        && (!('shiftId' in data.keys()) || data.shiftId is string)
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    function isValidEmployee(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'name', 'role', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.name is string
+        && data.name.size() <= 100
+        && data.role is string
+        && data.role.size() <= 50
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    function isValidShift(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'employeeId', 'employeeName', 'startTime', 'status', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.employeeId is string
+        && data.employeeName is string
+        && data.employeeName.size() <= 100
+        && data.startTime is string
+        && data.status in ["Active", "Completed"]
+        && (!('endTime' in data.keys()) || data.endTime is string)
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    function isValidDayClose(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'date', 'totalShiftSales', 'totalNetDue', 'overallDayCash', 'shiftsCount', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.date is string
+        && data.totalShiftSales is number
+        && data.totalNetDue is number
+        && data.overallDayCash is number
+        && data.shiftsCount is number
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    function isValidBook(data, isCreate) {
+      return data.keys().hasAll(['id', 'userId', 'gameNumber', 'name', 'price', 'totalTickets', 'createdAt'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.userId == request.auth.uid
+        && data.gameNumber is string
+        && data.gameNumber.size() <= 50
+        && data.name is string
+        && data.name.size() <= 150
+        && data.price is number
+        && data.totalTickets is number
+        && (!('isActive' in data.keys()) || data.isActive is bool)
+        && (isCreate ? data.createdAt == request.time : data.createdAt == existing().createdAt);
+    }
+
+    match /packs/{packId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() 
+                    && isValidId(packId)
+                    && isValidPack(incoming(), true)
+                    && incoming().id == packId;
+      allow update: if isSignedIn()
+                    && isValidPack(incoming(), false)
+                    && incoming().userId == existing().userId
+                    && incoming().id == existing().id;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /audits/{auditId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                    && isValidId(auditId)
+                    && isValidAuditRecord(incoming(), true)
+                    && incoming().id == auditId;
+      allow update: if isSignedIn()
+                    && isValidAuditRecord(incoming(), false)
+                    && incoming().userId == existing().userId
+                    && incoming().id == existing().id;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /employees/{employeeId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                    && isValidId(employeeId)
+                    && isValidEmployee(incoming(), true)
+                    && incoming().id == employeeId;
+      allow update: if isSignedIn()
+                    && isValidEmployee(incoming(), false)
+                    && incoming().userId == existing().userId
+                    && incoming().id == existing().id;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /shifts/{shiftId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                    && isValidId(shiftId)
+                    && isValidShift(incoming(), true)
+                    && incoming().id == shiftId;
+      allow update: if isSignedIn()
+                    && isValidShift(incoming(), false)
+                    && incoming().userId == existing().userId
+                    && incoming().id == existing().id
+                    && incoming().employeeId == existing().employeeId;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /day_closes/{dayCloseId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                    && isValidId(dayCloseId)
+                    && isValidDayClose(incoming(), true)
+                    && incoming().id == dayCloseId;
+      allow update: if false;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+
+    match /books/{bookId} {
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+                    && isValidId(bookId)
+                    && isValidBook(incoming(), true)
+                    && incoming().id == bookId;
+      allow update: if isSignedIn()
+                    && isValidBook(incoming(), false)
+                    && incoming().userId == existing().userId
+                    && incoming().id == existing().id;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}
