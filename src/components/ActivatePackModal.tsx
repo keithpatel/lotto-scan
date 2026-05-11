@@ -190,8 +190,8 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
                   <input 
                     ref={priceRef}
-                    type="text"
-                    inputMode="decimal"
+                    type="search"
+                    inputMode="text"
                     autoComplete="off"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
@@ -202,8 +202,8 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Tickets</label>
                   <input 
-                    type="text"
-                    inputMode="numeric"
+                    type="search"
+                    inputMode="text"
                     autoComplete="off"
                     value={totalTickets}
                     onChange={(e) => setTotalTickets(e.target.value)}
