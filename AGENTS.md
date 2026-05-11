@@ -99,6 +99,31 @@ src/
 - Environment variables: create `.env.local` with `GEMINI_API_KEY`
 - Firebase config loaded from `firebase-applet-config.json`
 
+## Design System
+
+This project uses a custom dark theme with gold accents:
+
+### CSS Variables (in index.css)
+- `--bg-primary`: #0a0a0f (main background)
+- `--bg-secondary`: #12121a (cards/sidebar)
+- `--bg-card`: #1a1a24 (elevated surfaces)
+- `--text-primary`: #f5f5f7 (main text)
+- `--text-secondary`: #a1a1aa (secondary text)
+- `--text-muted`: #71717a (muted text)
+- `--accent-gold`: #fbbf24 (primary accent)
+- `--accent-emerald`: #10b981 (success/active)
+- `--accent-rose`: #f43f5e (danger/delete)
+
+### Typography
+- Display font: 'Outfit' (headings)
+- Body font: 'DM Sans' (content)
+
+### Key Styling Patterns
+- Use CSS variables for all colors: `style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}`
+- Use `animate-fade-in-up` for page load animations
+- Use gold gradient buttons: `background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)'`
+- Card styling: `background: 'var(--bg-card)', border: '1px solid var(--border-subtle)'`
+
 ## Chrome DevTools MCP
 
 This project includes Chrome DevTools MCP configuration for browser automation and debugging. The MCP server is configured in `opencode.json`.

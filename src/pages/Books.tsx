@@ -80,23 +80,25 @@ export function Books() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-8 flex flex-col h-full overflow-hidden">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 flex flex-col h-full overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Scratcher Books</h1>
-          <p className="text-slate-500 mt-1">Manage active packs and book templates.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Scratcher Books</h1>
+          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Manage active packs and book templates.</p>
         </div>
         <div className="flex gap-2">
           <button 
             onClick={() => setViewMode('packs')}
-            className={cn("px-4 py-2 rounded-lg font-medium text-sm transition-colors", viewMode === 'packs' ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}
+            className={cn("px-4 py-2 rounded-xl font-medium text-sm transition-all cursor-pointer", viewMode === 'packs' ? "text-black" : "")}
+            style={viewMode === 'packs' ? { background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', boxShadow: 'var(--shadow-gold)' } : { background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
           >
             <Package className="w-4 h-4 inline mr-1" />
             Active Packs
           </button>
           <button 
             onClick={() => setViewMode('templates')}
-            className={cn("px-4 py-2 rounded-lg font-medium text-sm transition-colors", viewMode === 'templates' ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200")}
+            className={cn("px-4 py-2 rounded-xl font-medium text-sm transition-all cursor-pointer", viewMode === 'templates' ? "text-black" : "")}
+            style={viewMode === 'templates' ? { background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', boxShadow: 'var(--shadow-gold)' } : { background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
           >
             <BookOpen className="w-4 h-4 inline mr-1" />
             Templates
@@ -110,13 +112,13 @@ export function Books() {
             const ticketsRemaining = Math.max(0, pack.totalTickets - pack.currentTicket);
             const valueLeft = ticketsRemaining * pack.price;
             return (
-              <div key={pack.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+              <div key={pack.id} className="p-5 rounded-2xl transition-all hover:scale-[1.02]" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-bold text-slate-900">{pack.game}</h3>
-                    <p className="text-xs text-slate-500 font-mono">{pack.id}</p>
+                    <h3 className="font-bold" style={{ color: 'var(--text-primary)' }}>{pack.game}</h3>
+                    <p className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{pack.id}</p>
                   </div>
-                  <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold">Active</span>
+                  <span className="px-2 py-1 rounded-lg text-xs font-bold" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald-light)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>Active</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>

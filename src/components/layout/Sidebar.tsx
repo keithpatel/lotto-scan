@@ -5,7 +5,8 @@ import {
   ClipboardCheck, 
   Users, 
   BookOpen,
-  CalendarCheck
+  CalendarCheck,
+  Ticket
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,44 +18,48 @@ const navItems = [
   { icon: Users, label: 'Employees', path: '/employees' }
 ];
 
-export function Sidebar({ className = "w-64", onLinkClick }: { className?: string, onLinkClick?: () => void }) {
+export function Sidebar({ className = "w-72", onLinkClick }: { className?: string, onLinkClick?: () => void }) {
   return (
-    <aside className={cn("flex-shrink-0 border-r border-slate-200 bg-white h-screen flex flex-col relative", className)}>
+    <aside className={cn("flex-shrink-0 h-screen flex flex-col relative", className)} style={{ background: 'var(--bg-secondary)', borderRight: '1px solid var(--border-subtle)' }}>
       <div className="p-6">
-        <div className="flex items-center gap-2 font-bold text-blue-600">
-          <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs">LG</div>
-          <span className="text-xl tracking-tight text-slate-800">LottoGuard</span>
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', boxShadow: 'var(--shadow-gold)' }}>
+            <Ticket className="w-5 h-5 text-black" />
+          </div>
+          <span className="text-xl font-display font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Lotto Scan</span>
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto">
-        <nav className="mt-4 space-y-1 px-4 flex-1">
-          {navItems.map((item) => (
+      <div className="flex-1 overflow-y-auto mt-2">
+        <nav className="space-y-1 px-4 flex-1">
+          {navItems.map((item, index) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={onLinkClick}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-slate-100 text-slate-900"
-                    : "text-slate-500 hover:bg-slate-50"
+                    ? "text-black"
+                    : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 )
               }
+              style={({ isActive }) => isActive ? {
+                background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)',
+                boxShadow: 'var(--shadow-gold)'
+              } : {}}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              {item.label}
+              <item.icon className="h-5 w-5 flex-shrink-0" style={({ isActive }) => isActive ? { color: '#000' } : {}} />
+              <span style={({ isActive }) => isActive ? { color: '#000' } : {}}>{item.label}</span>
             </NavLink>
           ))}
         </nav>
       </div>
 
-      <div className="absolute bottom-8 w-64 px-6">
-        <div className="rounded-xl bg-blue-50 p-4 border border-blue-100">
-          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider">Phase 1: Prototyping</p>
-          <p className="mt-1 text-[11px] text-blue-600 leading-relaxed">Powered by Google AI Studio</p>
-        </div>
+      <div className="p-4 m-4 rounded-xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--accent-gold)' }}>Premium</p>
+        <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>Scratcher inventory management</p>
       </div>
     </aside>
   );

@@ -45,87 +45,92 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <>
-      <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-3 md:px-8">
-        <div className="flex items-center gap-1.5 md:gap-4">
+      <header className="flex h-16 items-center justify-between px-4 md:px-8" style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-subtle)' }}>
+        <div className="flex items-center gap-2 md:gap-4">
           <button 
             onClick={onMenuClick}
-            className="md:hidden p-1.5 -ml-1 text-slate-500 hover:bg-slate-100 rounded-lg flex-shrink-0"
+            className="md:hidden p-2 rounded-lg flex-shrink-0 transition-colors"
+            style={{ color: 'var(--text-secondary)' }}
           >
             <Menu className="w-5 h-5" />
           </button>
           {activeShift ? (
-            <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-blue-700 bg-blue-50 px-2 py-1 md:px-3 md:py-1 rounded-full font-medium flex-shrink-0">
+            <div className="flex items-center gap-2 text-xs md:text-sm px-3 py-1.5 rounded-full font-medium flex-shrink-0" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald-light)' }}>
               <Clock className="w-3.5 h-3.5 hidden md:block" />
               <span className="truncate max-w-[80px] md:max-w-[200px]">Shift: {activeShift.employeeName}</span>
             </div>
           ) : (
-            <span className="text-xs md:text-sm text-amber-600 font-medium bg-amber-50 px-2 py-1 md:px-3 md:py-1 rounded-full flex-shrink-0">No active shift</span>
+            <span className="text-xs md:text-sm font-medium px-3 py-1.5 rounded-full flex-shrink-0" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-amber)' }}>No active shift</span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 md:gap-4 flex-shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
           <button 
             onClick={() => setCloseDayModalOpen(true)}
-            className="flex h-8 md:h-9 items-center gap-1.5 md:gap-2 rounded-lg bg-indigo-50 text-indigo-700 px-2 md:px-4 text-xs md:text-sm font-semibold hover:bg-indigo-100 transition-colors flex-shrink-0"
+            className="flex h-9 items-center gap-2 rounded-xl px-3 md:px-4 text-xs md:text-sm font-semibold transition-all flex-shrink-0 cursor-pointer"
+            style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
             title="Close Day"
           >
-            <CalendarCheck className="w-4 h-4 md:w-4 md:h-4" />
+            <CalendarCheck className="w-4 h-4" />
             <span className="hidden md:inline">Close Day</span>
           </button>
 
           {!activeShift ? (
             <button 
               onClick={() => setStartShiftModalOpen(true)}
-              className="flex h-8 md:h-9 items-center gap-1.5 md:gap-2 rounded-lg bg-emerald-600 px-2 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 transition-colors flex-shrink-0"
+              className="flex h-9 items-center gap-2 rounded-xl px-3 md:px-4 text-xs md:text-sm font-semibold transition-all flex-shrink-0 cursor-pointer"
+              style={{ background: 'linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%)', color: '#fff' }}
               title="Start Shift"
             >
-              <CheckCircle className="w-4 h-4 md:w-4 md:h-4" />
+              <CheckCircle className="w-4 h-4" />
               <span className="hidden md:inline">Start Shift</span>
             </button>
           ) : (
             <button 
               onClick={() => setAuditModalOpen(true)}
-              className="flex h-8 md:h-9 items-center gap-1.5 md:gap-2 rounded-lg bg-blue-600 px-2 md:px-4 text-xs md:text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors flex-shrink-0"
+              className="flex h-9 items-center gap-2 rounded-xl px-3 md:px-4 text-xs md:text-sm font-semibold transition-all flex-shrink-0 cursor-pointer"
+              style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', color: '#000', boxShadow: 'var(--shadow-gold)' }}
               title="End Shift Audit"
             >
-              <ClipboardCheck className="w-4 h-4 md:w-4 md:h-4" />
+              <ClipboardCheck className="w-4 h-4" />
               <span className="hidden md:inline">End Shift</span>
             </button>
           )}
 
           <button 
             onClick={logOut}
-            className="hidden sm:flex h-8 w-8 rounded-full bg-slate-200 items-center justify-center overflow-hidden flex-shrink-0 hover:bg-slate-300 transition-colors cursor-pointer"
+            className="hidden sm:flex h-9 w-9 rounded-xl items-center justify-center overflow-hidden flex-shrink-0 transition-all cursor-pointer"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
             title="Sign Out"
           >
-            <span className="text-xs font-semibold text-slate-500">Out</span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>Out</span>
           </button>
         </div>
       </header>
 
       {isStartShiftModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
+          <div className="w-full max-w-md rounded-2xl overflow-hidden" style={{ background: 'var(--bg-card)', boxShadow: 'var(--shadow-elevated)', border: '1px solid var(--border-subtle)' }}>
+            <div className="p-6 flex justify-between items-center" style={{ background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)' }}>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Start Shift</h2>
-                <p className="text-sm text-slate-500">Select the employee starting their shift.</p>
+                <h2 className="text-lg font-display font-bold" style={{ color: 'var(--text-primary)' }}>Start Shift</h2>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select the employee starting their shift.</p>
               </div>
-              <button onClick={() => setStartShiftModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setStartShiftModalOpen(false)} style={{ color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
             </div>
             
             <form onSubmit={handleStartShift} className="p-6 space-y-4">
               {hasUnclosedPastDays && (
-                <div className="text-sm border border-red-200 bg-red-50 rounded-lg p-3 text-red-700">
+                <div className="text-sm rounded-lg p-3" style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', color: 'var(--accent-rose)' }}>
                   <p className="font-semibold mb-1">Unclosed Days Detected</p>
                   <p>You have unclosed shifts from previous days. Please close those days before starting a new shift.</p>
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Employee</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Employee</label>
                 {employees.length === 0 ? (
-                  <div className="text-sm border border-amber-200 bg-amber-50 rounded-lg p-3 text-amber-700">
+                  <div className="text-sm rounded-lg p-3" style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', color: 'var(--accent-amber)' }}>
                     No employees found. Please add an employee in the Team tab first.
                   </div>
                 ) : (
@@ -133,12 +138,13 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     required
                     value={selectedEmployeeId}
                     onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 rounded-xl text-sm transition-all"
+                    style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
                     disabled={hasUnclosedPastDays}
                   >
-                    <option value="" disabled>Select employee</option>
+                    <option value="" disabled style={{ color: 'var(--text-muted)' }}>Select employee</option>
                     {employees.map(emp => (
-                      <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
+                      <option key={emp.id} value={emp.id} style={{ background: 'var(--bg-secondary)' }}>{emp.name} ({emp.role})</option>
                     ))}
                   </select>
                 )}
@@ -148,14 +154,16 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                 <button
                   type="button"
                   onClick={() => setStartShiftModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                  className="px-4 py-2.5 text-sm font-medium rounded-xl transition-all cursor-pointer"
+                  style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!selectedEmployeeId || hasUnclosedPastDays}
-                  className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-lg transition-colors shadow-sm"
+                  className="px-4 py-2.5 text-sm font-medium rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  style={{ background: 'linear-gradient(135deg, var(--accent-emerald) 0%, #059669 100%)', color: '#fff' }}
                 >
                   Start Shift
                 </button>
