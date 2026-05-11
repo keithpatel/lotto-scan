@@ -29,16 +29,6 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (step === 'DETAILS' && priceRef.current) {
-      // Small delay to let the DOM render before focusing
-      setTimeout(() => {
-        priceRef.current?.focus();
-        priceRef.current?.click();
-      }, 100);
-    }
-  }, [step]);
-
   const handleCameraScan = (decodedText: string) => {
     setBarcode(decodedText);
     setUseCamera(false);
@@ -193,8 +183,10 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                     type="search"
                     inputMode="text"
                     autoComplete="off"
+                    autoFocus
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
+                    onClick={(e) => e.currentTarget.focus()}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   />
@@ -207,6 +199,7 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                     autoComplete="off"
                     value={totalTickets}
                     onChange={(e) => setTotalTickets(e.target.value)}
+                    onClick={(e) => e.currentTarget.focus()}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   />
