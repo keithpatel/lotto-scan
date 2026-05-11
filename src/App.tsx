@@ -13,8 +13,8 @@ const Employees = lazy(() => import('./pages/Employees').then(m => ({ default: m
 
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center h-full py-24">
-      <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex items-center justify-center h-full py-24" style={{ background: '#0a0a0f' }}>
+      <div className="w-8 h-8 border-2 border-[#fbbf24] border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 }
@@ -24,40 +24,40 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
-        <div className="w-12 h-12 border-3 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0f' }}>
+        <div className="w-12 h-12 border-3 border-[#fbbf24] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: '#0a0a0f' }}>
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full" style={{ background: 'radial-gradient(circle, var(--accent-gold-glow) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full" style={{ background: 'radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full" style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.15) 0%, transparent 70%)', filter: 'blur(60px)' }}></div>
         </div>
         
         <div className="relative z-10 max-w-md w-full mx-4">
           <div className="text-center mb-10 animate-fade-in-up">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6" style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', boxShadow: 'var(--shadow-gold)' }}>
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6" style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', boxShadow: '0 4px 20px rgba(251, 191, 36, 0.15)' }}>
               <Ticket className="w-10 h-10 text-black" />
             </div>
-            <h1 className="text-4xl font-display font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Lotto Scan</h1>
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Premium scratcher inventory management</p>
+            <h1 className="text-4xl font-display font-bold mb-3" style={{ color: '#f5f5f7' }}>Lotto Scan</h1>
+            <p className="text-lg" style={{ color: '#a1a1aa' }}>Premium scratcher inventory management</p>
           </div>
 
-          <div className="animate-fade-in-up delay-200" style={{ background: 'var(--bg-card)', borderRadius: '24px', padding: '40px', border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-elevated)' }}>
-            <h2 className="text-2xl font-display font-bold text-center mb-3" style={{ color: 'var(--text-primary)' }}>Welcome Back</h2>
-            <p className="text-center mb-8" style={{ color: 'var(--text-muted)' }}>Sign in to manage your inventory</p>
+          <div className="animate-fade-in-up delay-200" style={{ background: '#1a1a24', borderRadius: '24px', padding: '40px', border: '1px solid rgba(255, 255, 255, 0.08)', boxShadow: '0 16px 48px rgba(0, 0, 0, 0.5)' }}>
+            <h2 className="text-2xl font-display font-bold text-center mb-3" style={{ color: '#f5f5f7' }}>Welcome Back</h2>
+            <p className="text-center mb-8" style={{ color: '#71717a' }}>Sign in to manage your inventory</p>
             
             <button 
               onClick={signIn}
               className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
               style={{ 
-                background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)',
+                background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
                 color: '#000',
-                boxShadow: 'var(--shadow-gold)',
+                boxShadow: '0 4px 20px rgba(251, 191, 36, 0.15)',
               }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
@@ -67,7 +67,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
             </button>
           </div>
 
-          <p className="text-center mt-8 text-sm animate-fade-in-up delay-300" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-center mt-8 text-sm animate-fade-in-up delay-300" style={{ color: '#71717a' }}>
             Secure authentication via Google
           </p>
         </div>

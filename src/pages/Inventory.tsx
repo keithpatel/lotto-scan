@@ -53,13 +53,13 @@ export function Inventory() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 flex flex-col h-full overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="animate-fade-in-up">
-          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Inventory Dashboard</h1>
-          <p className="mt-1" style={{ color: 'var(--text-muted)' }}>Live overview of your physical scratcher tickets.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: '#f5f5f7' }}>Inventory Dashboard</h1>
+          <p className="mt-1" style={{ color: '#71717a' }}>Live overview of your physical scratcher tickets.</p>
         </div>
         <button 
           onClick={() => setIsActivateModalOpen(true)}
           className="self-start sm:self-auto flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all cursor-pointer animate-fade-in-up delay-100"
-          style={{ background: 'linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%)', color: '#000', boxShadow: 'var(--shadow-gold)' }}
+          style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', boxShadow: '0 4px 20px rgba(251, 191, 36, 0.15)' }}
           onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
@@ -69,47 +69,47 @@ export function Inventory() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-200" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full" style={{ background: 'radial-gradient(circle, var(--accent-gold-glow) 0%, transparent 70%)', filter: 'blur(20px)' }}></div>
+        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-200" style={{ background: '#1a1a24', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <div className="absolute top-0 right-0 w-32 h-32 rounded-full" style={{ background: 'radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 70%)', filter: 'blur(20px)' }}></div>
           <div className="relative">
-            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Total Shelf Value</div>
-            <div className="text-3xl font-display font-black" style={{ color: 'var(--accent-gold)' }}>${totalValue.toLocaleString()}</div>
-            <div className="text-xs font-medium mt-2" style={{ color: 'var(--text-muted)' }}>Closing Day Value</div>
+            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#71717a' }}>Total Shelf Value</div>
+            <div className="text-3xl font-display font-black" style={{ color: '#fbbf24' }}>${totalValue.toLocaleString()}</div>
+            <div className="text-xs font-medium mt-2" style={{ color: '#71717a' }}>Closing Day Value</div>
           </div>
         </div>
         
-        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-300" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-300" style={{ background: '#1a1a24', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div className="absolute top-0 right-0 w-32 h-32 rounded-full" style={{ background: 'radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%)', filter: 'blur(20px)' }}></div>
           <div className="relative">
-            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Revenue Sold</div>
-            <div className="text-3xl font-display font-black" style={{ color: 'var(--accent-emerald-light)' }}>${totalSoldValue.toLocaleString()}</div>
-            <div className="text-xs font-medium mt-2" style={{ color: 'var(--text-muted)' }}>From active & completed packs</div>
+            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#71717a' }}>Revenue Sold</div>
+            <div className="text-3xl font-display font-black" style={{ color: '#34d399' }}>${totalSoldValue.toLocaleString()}</div>
+            <div className="text-xs font-medium mt-2" style={{ color: '#71717a' }}>From active & completed packs</div>
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-400" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+        <div className="relative overflow-hidden rounded-2xl p-6 animate-fade-in-up delay-400" style={{ background: '#1a1a24', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div className="relative">
-            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Active Packs</div>
-            <div className="text-3xl font-display font-black" style={{ color: 'var(--text-primary)' }}>{activePacksCount}</div>
-            <div className="text-xs font-medium mt-2" style={{ color: 'var(--text-muted)' }}>Currently on display</div>
+            <div className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#71717a' }}>Active Packs</div>
+            <div className="text-3xl font-display font-black" style={{ color: '#f5f5f7' }}>{activePacksCount}</div>
+            <div className="text-xs font-medium mt-2" style={{ color: '#71717a' }}>Currently on display</div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl p-6 animate-fade-in-up delay-500" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-        <div className="flex flex-col sm:flex-row justify-between mb-4 pb-4 gap-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="rounded-2xl p-6 animate-fade-in-up delay-500" style={{ background: '#1a1a24', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+        <div className="flex flex-col sm:flex-row justify-between mb-4 pb-4 gap-4" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div>
-            <h3 className="text-lg font-display font-bold" style={{ color: 'var(--text-primary)' }}>Value Breakdown</h3>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Breakdown of tickets currently in active packs.</p>
+            <h3 className="text-lg font-display font-bold" style={{ color: '#f5f5f7' }}>Value Breakdown</h3>
+            <p className="text-sm" style={{ color: '#71717a' }}>Breakdown of tickets currently in active packs.</p>
           </div>
           <div className="flex gap-6 sm:justify-end text-sm">
             <div>
-              <span className="block text-xs" style={{ color: 'var(--text-muted)' }}>Opening Day Value</span>
-              <span className="font-display font-bold text-lg" style={{ color: 'var(--text-primary)' }}>${openingValue.toLocaleString()}</span>
+              <span className="block text-xs" style={{ color: '#71717a' }}>Opening Day Value</span>
+              <span className="font-display font-bold text-lg" style={{ color: '#f5f5f7' }}>${openingValue.toLocaleString()}</span>
             </div>
             <div>
-              <span className="block text-xs" style={{ color: 'var(--text-muted)' }}>Closing Day Value</span>
-              <span className="font-display font-bold text-lg" style={{ color: 'var(--accent-gold)' }}>${totalValue.toLocaleString()}</span>
+              <span className="block text-xs" style={{ color: '#71717a' }}>Closing Day Value</span>
+              <span className="font-display font-bold text-lg" style={{ color: '#fbbf24' }}>${totalValue.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -119,34 +119,34 @@ export function Inventory() {
             Object.entries(valueBreakdown).sort((a,b) => Number(a[0]) - Number(b[0])).map(([price, dataRaw]) => {
               const data = dataRaw as { count: number; value: number; };
               return (
-              <div key={price} className="rounded-xl p-3 transition-all hover:scale-[1.02]" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}>
-                <div className="text-xs font-medium mb-1" style={{ color: 'var(--accent-gold)' }}>${price} tickets</div>
-                <div className="text-lg font-display font-bold" style={{ color: 'var(--text-primary)' }}>${data.value.toLocaleString()}</div>
-                <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{data.count} remaining</div>
+              <div key={price} className="rounded-xl p-3 transition-all hover:scale-[1.02]" style={{ background: '#1e1e28', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="text-xs font-medium mb-1" style={{ color: '#fbbf24' }}>${price} tickets</div>
+                <div className="text-lg font-display font-bold" style={{ color: '#f5f5f7' }}>${data.value.toLocaleString()}</div>
+                <div className="text-xs mt-1" style={{ color: '#71717a' }}>{data.count} remaining</div>
               </div>
             )})
           ) : (
-            <div className="col-span-full py-8 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
+            <div className="col-span-full py-8 text-center text-sm" style={{ color: '#71717a' }}>
               No active tickets found.
             </div>
           )}
         </div>
       </div>
 
-      <div className="rounded-2xl flex flex-col min-h-0 flex-1 overflow-hidden animate-fade-in-up delay-500" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-        <div className="p-4 flex flex-col sm:flex-row gap-3" style={{ background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="rounded-2xl flex flex-col min-h-0 flex-1 overflow-hidden animate-fade-in-up delay-500" style={{ background: '#1a1a24', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+        <div className="p-4 flex flex-col sm:flex-row gap-3" style={{ background: '#1e1e28', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5" style={{ color: 'var(--text-muted)' }} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5" style={{ color: '#71717a' }} />
             <input 
               type="text" 
               placeholder="Search by game name, barcode ID..." 
               className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium transition-all"
-              style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
+              style={{ background: '#12121a', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#f5f5f7' }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+          <button className="flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: '#12121a', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#a1a1aa' }}>
             <Filter className="h-4 w-4 mr-2" />
             View: All Active
           </button>
@@ -155,7 +155,7 @@ export function Inventory() {
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-[11px] font-bold uppercase tracking-wider" style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-subtle)' }}>
+              <tr className="text-[11px] font-bold uppercase tracking-wider" style={{ background: '#1e1e28', color: '#71717a', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
                 <th className="py-4 px-6 w-1/3">Game & Identifier</th>
                 <th className="py-4 px-6">Progress (Sold / Total)</th>
                 <th className="py-4 px-6 text-right">Remaining Value</th>
@@ -163,15 +163,15 @@ export function Inventory() {
                 <th className="py-4 px-6 text-right"></th>
               </tr>
             </thead>
-            <tbody className="divide-y" style={{ color: 'var(--border-subtle)' }}>
+            <tbody className="divide-y" style={{ color: 'rgba(255, 255, 255, 0.08)' }}>
               {filteredData.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="py-16 text-center">
-                    <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: 'var(--bg-elevated)', border: '2px solid var(--border-subtle)' }}>
-                      <Ticket className="w-6 h-6" style={{ color: 'var(--text-muted)' }} />
+                    <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#1e1e28', border: '2px solid rgba(255, 255, 255, 0.08)' }}>
+                      <Ticket className="w-6 h-6" style={{ color: '#71717a' }} />
                     </div>
-                    <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>No packs found.</p>
-                    <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Activate a new pack to add it to your inventory.</p>
+                    <p className="font-semibold" style={{ color: '#f5f5f7' }}>No packs found.</p>
+                    <p className="text-sm mt-1" style={{ color: '#71717a' }}>Activate a new pack to add it to your inventory.</p>
                   </td>
                 </tr>
               ) : (
@@ -183,25 +183,25 @@ export function Inventory() {
                   const valueLeft = ticketsRemaining * row.price;
                   
                   return (
-                    <tr key={row.id} className="transition-colors cursor-pointer group" style={{ background: 'var(--bg-card)' }}>
+                    <tr key={row.id} className="transition-colors cursor-pointer group" style={{ background: '#1a1a24' }}>
                       <td className="py-4 px-6">
                         <div className="flex flex-col">
-                          <span className="font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>{row.game}</span>
-                          <span className="text-xs font-mono mt-0.5" style={{ color: 'var(--text-muted)' }}>ID: {row.id}</span>
+                          <span className="font-bold tracking-tight" style={{ color: '#f5f5f7' }}>{row.game}</span>
+                          <span className="text-xs font-mono mt-0.5" style={{ color: '#71717a' }}>ID: {row.id}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex flex-col justify-center max-w-[200px]">
                            <div className="flex justify-between text-xs font-semibold mb-1.5">
-                             <span style={{ color: 'var(--text-secondary)' }}>{ticketsSold} tickets sold</span>
-                             <span style={{ color: 'var(--text-muted)' }}>{totalTix} total</span>
+                             <span style={{ color: '#a1a1aa' }}>{ticketsSold} tickets sold</span>
+                             <span style={{ color: '#71717a' }}>{totalTix} total</span>
                            </div>
-                           <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
+                           <div className="w-full h-2.5 rounded-full overflow-hidden" style={{ background: '#1e1e28' }}>
                              <div 
                                className="h-full transition-all duration-500" 
                                style={{ 
                                  width: `${percentSold}%`,
-                                 background: percentSold > 90 ? 'var(--accent-emerald)' : 'var(--accent-gold)'
+                                 background: percentSold > 90 ? '#10b981' : '#fbbf24'
                                }}
                              />
                            </div>
@@ -209,17 +209,17 @@ export function Inventory() {
                       </td>
                       <td className="py-4 px-6 text-right">
                         <div className="flex flex-col items-end">
-                          <span className="font-bold" style={{ color: 'var(--text-primary)' }}>${valueLeft.toLocaleString()}</span>
-                          <span className="text-[11px] font-medium uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{ticketsRemaining} left @ ${row.price}</span>
+                          <span className="font-bold" style={{ color: '#f5f5f7' }}>${valueLeft.toLocaleString()}</span>
+                          <span className="text-[11px] font-medium uppercase tracking-widest" style={{ color: '#71717a' }}>{ticketsRemaining} left @ ${row.price}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6 text-center">
                         <span className={cn(
                           "inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider"
                         )} style={{
-                          background: row.status === 'Active' ? 'rgba(16, 185, 129, 0.15)' : row.status === 'Sold Out' ? 'var(--bg-elevated)' : 'rgba(245, 158, 11, 0.15)',
-                          color: row.status === 'Active' ? 'var(--accent-emerald-light)' : row.status === 'Sold Out' ? 'var(--text-muted)' : 'var(--accent-amber)',
-                          border: `1px solid ${row.status === 'Active' ? 'rgba(16, 185, 129, 0.3)' : row.status === 'Sold Out' ? 'var(--border-subtle)' : 'rgba(245, 158, 11, 0.3)'}`
+                          background: row.status === 'Active' ? 'rgba(16, 185, 129, 0.15)' : row.status === 'Sold Out' ? '#1e1e28' : 'rgba(245, 158, 11, 0.15)',
+                          color: row.status === 'Active' ? '#34d399' : row.status === 'Sold Out' ? '#71717a' : '#f59e0b',
+                          border: `1px solid ${row.status === 'Active' ? 'rgba(16, 185, 129, 0.3)' : row.status === 'Sold Out' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(245, 158, 11, 0.3)'}`
                         }}>
                           {row.status === 'Active' ? 'Active' : row.status}
                         </span>
@@ -231,7 +231,7 @@ export function Inventory() {
                             setPackToEdit(row);
                           }}
                           className="p-1.5 rounded-lg transition-colors focus:outline-none cursor-pointer"
-                          style={{ color: 'var(--text-muted)' }}
+                          style={{ color: '#71717a' }}
                         >
                           <Edit className="w-4 h-4" />
                         </button>
@@ -244,8 +244,8 @@ export function Inventory() {
           </table>
         </div>
         
-        <div className="p-4 flex items-center justify-between text-sm mt-auto" style={{ background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-          <div>Showing <strong style={{ color: 'var(--text-primary)' }}>{filteredData.length}</strong> {filteredData.length === 1 ? 'pack' : 'packs'}</div>
+        <div className="p-4 flex items-center justify-between text-sm mt-auto" style={{ background: '#1e1e28', borderTop: '1px solid rgba(255, 255, 255, 0.08)', color: '#71717a' }}>
+          <div>Showing <strong style={{ color: '#f5f5f7' }}>{filteredData.length}</strong> {filteredData.length === 1 ? 'pack' : 'packs'}</div>
         </div>
       </div>
       
