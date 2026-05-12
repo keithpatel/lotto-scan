@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Barcode, CheckCircle2, Camera } from 'lucide-react';
 import { useStore, Pack } from '@/contexts/StoreContext';
 import { CameraScanner } from './CameraScanner';
@@ -6,6 +6,17 @@ import { CameraScanner } from './CameraScanner';
 interface ActivatePackModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+function openIosKeyboard() {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.setAttribute('style', 'position: fixed; top: -100px; left: -100px; opacity: 0; pointer-events: none;');
+  document.body.appendChild(input);
+  input.focus();
+  setTimeout(() => {
+    input.remove();
+  }, 100);
 }
 
 export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
@@ -28,6 +39,24 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
       setUseCamera(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (step === 'DETAILS') {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        setTimeout(() => {
+          openIosKeyboard();
+          setTimeout(() => {
+            priceRef.current?.focus();
+          }, 100);
+        }, 150);
+      } else {
+        setTimeout(() => {
+          priceRef.current?.focus();
+        }, 100);
+      }
+    }
+  }, [step]);
 
   const handleCameraScan = (decodedText: string) => {
     setBarcode(decodedText);
@@ -189,11 +218,12 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                   autoComplete="off"
                   value={game}
                   onChange={(e) => setGame(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm touch-manipulation"
+                  style={{ touchAction: 'manipulation' }}
                 />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
                   <input 
@@ -203,7 +233,8 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                     autoComplete="off"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                    style={{ touchAction: 'manipulation' }}
                     required
                   />
                 </div>
@@ -215,7 +246,8 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                     autoComplete="off"
                     value={totalTickets}
                     onChange={(e) => setTotalTickets(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                    style={{ touchAction: 'manipulation' }}
                     required
                   />
                 </div>
