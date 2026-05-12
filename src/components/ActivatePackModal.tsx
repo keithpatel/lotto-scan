@@ -51,12 +51,26 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
       const gameNumStr = rawBarcode.length >= 4 ? rawBarcode.slice(0, 4) : '';
       const matchedPack = packs.find(p => p.id.startsWith(gameNumStr));
       
-      setStep('DETAILS');
+      // Blur the input before unmounting to fix iOS Safari keyboard getting stuck
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+
+      // Short delay helps iOS Safari reset its focus state before mounting new inputs
+      setTimeout(() => {
+        setStep('DETAILS');
+      }, 50);
     }
   };
 
   const handleScanSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
     processBarcode(barcode);
   };
 
@@ -138,7 +152,11 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setStep('DETAILS')}
+                  onClick={() => {
+                    if (inputRef.current) inputRef.current.blur();
+                    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+                    setTimeout(() => setStep('DETAILS'), 50);
+                  }}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100"
                 >
                   <span>Enter Manually</span>
@@ -180,13 +198,11 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
                   <input 
                     ref={priceRef}
-                    type="search"
+                    type="text"
                     inputMode="text"
                     autoComplete="off"
-                    autoFocus
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    onClick={(e) => e.currentTarget.focus()}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   />
@@ -194,12 +210,11 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Tickets</label>
                   <input 
-                    type="search"
+                    type="text"
                     inputMode="text"
                     autoComplete="off"
                     value={totalTickets}
                     onChange={(e) => setTotalTickets(e.target.value)}
-                    onClick={(e) => e.currentTarget.focus()}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                     required
                   />
