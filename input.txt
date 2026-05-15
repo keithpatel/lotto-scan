@@ -1,0 +1,54 @@
+PROBLEM SUMMARY: Mobile Keyboard Not Opening in Safari (iPhone 12 Pro Max)
+
+---
+
+ISSUE DESCRIPTION:
+When using the "Activate New Pack" feature in the Lotto Scan app on iPhone 12 Pro Max (Safari browser), after scanning a ticket barcode, the keyboard fails to open in the Ticket Price and Total Tickets input fields. Other apps work fine after 2 minutes, but this app never opens the keyboard automatically. The user must wait 2 minutes and then the keyboard works elsewhere on the phone (not in this app).
+
+User confirmed:
+- iPhone 12 Pro Max
+- Safari browser
+- Other apps work fine (keyboard opens normally after 2 min delay, then works system-wide)
+- This specific app's input fields never trigger keyboard
+- Need text keyboard (not numeric) because user wants to enter negative values like "-5"
+
+---
+
+CURRENT CODE (src/components/ActivatePackModal.tsx - DETAILS STEP):
+
+Two input fields:
+1. Ticket Price - uses type="search", inputMode="text", has autoFocus, onClick handler
+2. Total Tickets - uses type="search", inputMode="text", has onClick handler
+
+Previous attempted fixes that didn't work:
+- inputMode="decimal" / "numeric" - keyboard didn't open
+- inputMode="text" with type="text" - 2 minute delay
+- type="search" with inputMode="text" - keyboard didn't open
+- Removed setTimeout focus code - still not working
+- Added autoFocus - still not working
+- Added onClick handler - still not working
+
+---
+
+EXPECTED BEHAVIOR:
+- When user reaches the DETAILS step (after scanning barcode), tapping on Ticket Price or Total Tickets input should immediately open the text keyboard in Safari
+- User needs to enter values like "-5" (negative numbers) so text keyboard is required
+
+---
+
+TECHNICAL NOTES:
+- This is a React 19 + TypeScript app using Vite
+- Using Tailwind CSS v4
+- The modal uses a fixed/absolute positioned overlay
+- Safari on iOS has known issues with keyboard detection (waits to see if hardware keyboard will be connected)
+- The issue seems specific to this app since other apps work fine after 2 minutes
+
+---
+
+FILES INVOLVED:
+- src/components/ActivatePackModal.tsx (lines ~188-214 contain the input fields)
+
+---
+
+ASK:
+Find a solution to make the text keyboard open immediately (not after 2 minutes) when user taps on Ticket Price or Total Tickets input fields in Safari on iPhone 12 Pro Max.

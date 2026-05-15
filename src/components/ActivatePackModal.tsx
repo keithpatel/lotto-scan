@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Barcode, CheckCircle2, Camera } from 'lucide-react';
 import { useStore, Pack } from '@/contexts/StoreContext';
 import { CameraScanner } from './CameraScanner';
@@ -8,16 +8,11 @@ interface ActivatePackModalProps {
   onClose: () => void;
 }
 
-function openIosKeyboard() {
-  const input = document.createElement('input');
-  input.setAttribute('type', 'text');
-  input.setAttribute('style', 'position: fixed; top: -100px; left: -100px; opacity: 0; pointer-events: none;');
-  document.body.appendChild(input);
-  input.focus();
-  setTimeout(() => {
-    input.remove();
-  }, 100);
-}
+// Shared input style to prevent iOS zoom (font-size >= 16px) and suppress autofill
+const INPUT_STYLE: React.CSSProperties = {
+  fontSize: '16px',       // Prevents iOS Safari from zooming into the input
+  touchAction: 'manipulation', // Disables double-tap zoom on iOS
+};
 
 export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
   const { addPack, packs } = useStore();
@@ -40,21 +35,20 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
     }
   }, [isOpen]);
 
+  // NOTE: We do NOT programmatically focus inputs on iOS.
+  // iOS Safari only opens the keyboard from a *direct* user tap gesture.
+  // Any setTimeout/programmatic .focus() call is ignored or causes the
+  // keyboard to flash open/closed. Let the user tap the field naturally.
   useEffect(() => {
     if (step === 'DETAILS') {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      if (isIOS) {
-        setTimeout(() => {
-          openIosKeyboard();
-          setTimeout(() => {
-            priceRef.current?.focus();
-          }, 100);
-        }, 150);
-      } else {
+      if (!isIOS) {
+        // On desktop/Android, auto-focus is fine
         setTimeout(() => {
           priceRef.current?.focus();
         }, 100);
       }
+      // On iOS: do nothing — user will tap the input
     }
   }, [step]);
 
@@ -130,7 +124,7 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-slate-100">
           <div className="flex items-center gap-2 text-blue-600">
@@ -167,6 +161,7 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                   onChange={(e) => setBarcode(e.target.value)}
                   className="w-full text-center text-lg font-mono tracking-widest px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Waiting for scanner..."
+                  style={INPUT_STYLE}
                 />
               </form>
               
@@ -215,26 +210,34 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 <input 
                   type="text" 
                   inputMode="text"
-                  autoComplete="off"
+                  autoComplete="new-password"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
                   value={game}
                   onChange={(e) => setGame(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm touch-manipulation"
-                  style={{ touchAction: 'manipulation' }}
+                  style={INPUT_STYLE}
+                  placeholder="Enter game name"
                 />
               </div>
               
-<div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
                   <input 
                     ref={priceRef}
                     type="text"
                     inputMode="text"
-                    autoComplete="off"
+                    autoComplete="new-password"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
-                    style={{ touchAction: 'manipulation' }}
+                    style={INPUT_STYLE}
+                    placeholder="e.g. 5"
                     required
                   />
                 </div>
@@ -243,11 +246,15 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                   <input 
                     type="text"
                     inputMode="text"
-                    autoComplete="off"
+                    autoComplete="new-password"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
                     value={totalTickets}
                     onChange={(e) => setTotalTickets(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
-                    style={{ touchAction: 'manipulation' }}
+                    style={INPUT_STYLE}
+                    placeholder="e.g. 50"
                     required
                   />
                 </div>
