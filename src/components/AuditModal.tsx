@@ -40,6 +40,26 @@ export function AuditModal({ isOpen, onClose }: AuditModalProps) {
     }
   }, [isOpen]);
 
+  // Emergency camera cleanup on modal close or step change
+  useEffect(() => {
+    if (!isOpen || (step !== 'scan' && !useCamera)) {
+      const cleanupTimer = setTimeout(() => {
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+          const stream = video.srcObject as MediaStream | null;
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+          }
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        });
+      }, 100);
+      return () => clearTimeout(cleanupTimer);
+    }
+  }, [isOpen, step, useCamera]);
+
   const handleCameraScan = (decodedText: string) => {
     setScannerInput(decodedText);
     setUseCamera(false);

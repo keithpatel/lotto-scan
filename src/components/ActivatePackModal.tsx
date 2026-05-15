@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Barcode, CheckCircle2, Camera } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { X, Barcode, CheckCircle2, Camera, Loader2 } from 'lucide-react';
 import { useStore, Pack } from '@/contexts/StoreContext';
 import { CameraScanner } from './CameraScanner';
 
@@ -18,7 +18,7 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
   const { addPack, packs } = useStore();
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const [step, setStep] = useState<'SCAN' | 'DETAILS' | 'SUCCESS'>('SCAN');
+  const [step, setStep] = useState<'SCAN' | 'PREPARING' | 'DETAILS' | 'SUCCESS'>('SCAN');
   const [barcode, setBarcode] = useState('');
   const [useCamera, setUseCamera] = useState(false);
   
@@ -32,10 +32,46 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
       setStep('SCAN');
       setBarcode('');
       setUseCamera(false);
+      setPrice('');
+      setGame('');
+      setTotalTickets('');
     }
   }, [isOpen]);
 
-  // On iOS we do NOT programmatically focus — only a direct user tap opens the keyboard.
+  // When PREPARING is done (camera released), show DETAILS
+  useEffect(() => {
+    if (step === 'PREPARING') {
+      // Reduced delay for iOS - Safari has issues with delayed input mounting
+      // causing keyboard detection delays
+      const timer = setTimeout(() => {
+        setStep('DETAILS');
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
+  // Emergency camera cleanup on modal close or step change
+  useEffect(() => {
+    if (!isOpen || (step !== 'SCAN' && !useCamera)) {
+      // Force cleanup any lingering camera streams
+      const cleanupTimer = setTimeout(() => {
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+          const stream = video.srcObject as MediaStream | null;
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+          }
+          video.pause();
+          video.removeAttribute('src');
+          video.load();
+        });
+      }, 100);
+      return () => clearTimeout(cleanupTimer);
+    }
+  }, [isOpen, step, useCamera]);
+
+  // Auto-focus on non-iOS when DETAILS step mounts
   useEffect(() => {
     if (step === 'DETAILS') {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -44,13 +80,32 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
           priceRef.current?.focus();
         }, 100);
       }
+      // On iOS: do NOT programmatically focus — only a direct user tap opens the keyboard
     }
   }, [step]);
 
-  const handleCameraScan = (decodedText: string) => {
+  // Wrap in useCallback so CameraScanner's ref stays stable
+  const handleCameraScan = useCallback((decodedText: string) => {
     setBarcode(decodedText);
     setUseCamera(false);
-    processBarcode(decodedText);
+    // Don't go straight to DETAILS — go to PREPARING first
+    // This gives iOS time to release the camera before we mount inputs
+    processBarcodeFromCamera(decodedText);
+  }, []);
+
+  const processBarcodeFromCamera = (rawBarcode: string) => {
+    rawBarcode = rawBarcode.trim();
+    if (rawBarcode) {
+      const basePackId = rawBarcode.length >= 14 ? rawBarcode.slice(0, 11) : (rawBarcode.length > 5 ? rawBarcode.slice(0, -3) : rawBarcode);
+      if (packs.find(p => p.id === rawBarcode || p.id === basePackId)) {
+        alert("This pack is already activated!");
+        setBarcode('');
+        setStep('SCAN');
+        return;
+      }
+      // Go to PREPARING (intermediate state) instead of DETAILS directly
+      setStep('PREPARING');
+    }
   };
 
   const processBarcode = (rawBarcode: string) => {
@@ -63,9 +118,6 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
         return;
       }
 
-      const gameNumStr = rawBarcode.length >= 4 ? rawBarcode.slice(0, 4) : '';
-      const matchedPack = packs.find(p => p.id.startsWith(gameNumStr));
-      
       if (inputRef.current) {
         inputRef.current.blur();
       }
@@ -188,6 +240,14 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
             </>
           )}
 
+          {/* Intermediate step: camera is releasing, inputs not yet mounted */}
+          {step === 'PREPARING' && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-3" />
+              <p className="text-sm text-slate-500">Preparing form...</p>
+            </div>
+          )}
+
           {step === 'DETAILS' && (
             <div className="space-y-4">
               <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between mb-4 border border-slate-100">
@@ -195,42 +255,25 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 <span className="font-mono text-sm font-semibold text-slate-900">{barcode}</span>
               </div>
               
-              {/*
-                FIX FOR iOS SAFARI "AutoFill Contact" KEYBOARD BLOCK:
-                - Wrap in a <form> with role="presentation" so Safari doesn't treat it as a real form
-                - Use random/nonsensical name= attributes so Safari can't pattern-match to contacts
-                - Use autoComplete with random strings (Safari ignores "off" but obeys unknown values)
-                - Hidden dummy fields absorb any remaining autofill detection
-                - data-lpignore / data-1p-ignore suppress password manager overlays
-              */}
               <form
                 autoComplete="off"
-                role="presentation"
-                data-form-type="other"
                 onSubmit={(e) => { e.preventDefault(); handleActivate(); }}
               >
-                {/* Hidden dummy fields to absorb Safari autofill detection */}
-                <input type="text" name="fakeuser_xz9" autoComplete="nope" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
-                <input type="text" name="fakepwd_xz9" autoComplete="nope" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
-
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Game Name</label>
                   <input 
-                    type="search"
-                    name="lotto_gx_928374"
+                    type="text"
                     inputMode="text"
-                    autoComplete="nope"
+                    autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
                     spellCheck={false}
-                    data-lpignore="true"
-                    data-1p-ignore="true"
-                    data-form-type="other"
                     value={game}
                     onChange={(e) => setGame(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm touch-manipulation"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
                     style={INPUT_STYLE}
                     placeholder="Enter game name"
+                    onClick={(e) => (e.target as HTMLInputElement).focus()}
                   />
                 </div>
                 
@@ -239,41 +282,37 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                     <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
                     <input 
                       ref={priceRef}
-                      type="search"
-                      name="lotto_px_716253"
+                      type="text"
                       inputMode="text"
-                      autoComplete="nope"
+                      enterKeyHint="enter"
+                      autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
                       spellCheck={false}
-                      data-lpignore="true"
-                      data-1p-ignore="true"
-                      data-form-type="other"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                       style={INPUT_STYLE}
-                      placeholder="e.g. 5"
+                      placeholder="e.g. -5"
+                      onTouchStart={(e) => (e.target as HTMLInputElement).focus()}
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Tickets</label>
                     <input 
-                      type="search"
-                      name="lotto_tx_493827"
+                      type="text"
                       inputMode="text"
-                      autoComplete="nope"
+                      enterKeyHint="enter"
+                      autoComplete="off"
                       autoCorrect="off"
                       autoCapitalize="off"
                       spellCheck={false}
-                      data-lpignore="true"
-                      data-1p-ignore="true"
-                      data-form-type="other"
                       value={totalTickets}
                       onChange={(e) => setTotalTickets(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg"
                       style={INPUT_STYLE}
                       placeholder="e.g. 50"
+                      onTouchStart={(e) => (e.target as HTMLInputElement).focus()}
                     />
                   </div>
                 </div>
