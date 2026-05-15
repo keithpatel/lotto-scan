@@ -8,10 +8,10 @@ interface ActivatePackModalProps {
   onClose: () => void;
 }
 
-// Shared input style to prevent iOS zoom (font-size >= 16px) and suppress autofill
+// Prevents iOS zoom (font-size >= 16px is critical) and suppresses double-tap zoom
 const INPUT_STYLE: React.CSSProperties = {
-  fontSize: '16px',       // Prevents iOS Safari from zooming into the input
-  touchAction: 'manipulation', // Disables double-tap zoom on iOS
+  fontSize: '16px',
+  touchAction: 'manipulation',
 };
 
 export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
@@ -35,36 +35,28 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
     }
   }, [isOpen]);
 
-  // NOTE: We do NOT programmatically focus inputs on iOS.
-  // iOS Safari only opens the keyboard from a *direct* user tap gesture.
-  // Any setTimeout/programmatic .focus() call is ignored or causes the
-  // keyboard to flash open/closed. Let the user tap the field naturally.
+  // On iOS we do NOT programmatically focus — only a direct user tap opens the keyboard.
   useEffect(() => {
     if (step === 'DETAILS') {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       if (!isIOS) {
-        // On desktop/Android, auto-focus is fine
         setTimeout(() => {
           priceRef.current?.focus();
         }, 100);
       }
-      // On iOS: do nothing — user will tap the input
     }
   }, [step]);
 
   const handleCameraScan = (decodedText: string) => {
     setBarcode(decodedText);
     setUseCamera(false);
-    // Auto-submit
     processBarcode(decodedText);
   };
 
   const processBarcode = (rawBarcode: string) => {
     rawBarcode = rawBarcode.trim();
     if (rawBarcode) {
-      // Parses game+pack id properly (first 11 chars) from a 24-digit scratcher barcode
       const basePackId = rawBarcode.length >= 14 ? rawBarcode.slice(0, 11) : (rawBarcode.length > 5 ? rawBarcode.slice(0, -3) : rawBarcode);
-      // Check if already activated
       if (packs.find(p => p.id === rawBarcode || p.id === basePackId)) {
         alert("This pack is already activated!");
         setBarcode('');
@@ -74,7 +66,6 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
       const gameNumStr = rawBarcode.length >= 4 ? rawBarcode.slice(0, 4) : '';
       const matchedPack = packs.find(p => p.id.startsWith(gameNumStr));
       
-      // Blur the input before unmounting to fix iOS Safari keyboard getting stuck
       if (inputRef.current) {
         inputRef.current.blur();
       }
@@ -82,7 +73,6 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
         document.activeElement.blur();
       }
 
-      // Short delay helps iOS Safari reset its focus state before mounting new inputs
       setTimeout(() => {
         setStep('DETAILS');
       }, 50);
@@ -205,67 +195,96 @@ export function ActivatePackModal({ isOpen, onClose }: ActivatePackModalProps) {
                 <span className="font-mono text-sm font-semibold text-slate-900">{barcode}</span>
               </div>
               
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Game Name</label>
-                <input 
-                  type="text" 
-                  inputMode="text"
-                  autoComplete="new-password"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                  value={game}
-                  onChange={(e) => setGame(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm touch-manipulation"
-                  style={INPUT_STYLE}
-                  placeholder="Enter game name"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
-                  <input 
-                    ref={priceRef}
-                    type="text"
-                    inputMode="text"
-                    autoComplete="new-password"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
-                    style={INPUT_STYLE}
-                    placeholder="e.g. 5"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Tickets</label>
-                  <input 
-                    type="text"
-                    inputMode="text"
-                    autoComplete="new-password"
-                    autoCorrect="off"
-                    autoCapitalize="off"
-                    spellCheck={false}
-                    value={totalTickets}
-                    onChange={(e) => setTotalTickets(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
-                    style={INPUT_STYLE}
-                    placeholder="e.g. 50"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <button 
-                onClick={handleActivate}
-                className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+              {/*
+                FIX FOR iOS SAFARI "AutoFill Contact" KEYBOARD BLOCK:
+                - Wrap in a <form> with role="presentation" so Safari doesn't treat it as a real form
+                - Use random/nonsensical name= attributes so Safari can't pattern-match to contacts
+                - Use autoComplete with random strings (Safari ignores "off" but obeys unknown values)
+                - Hidden dummy fields absorb any remaining autofill detection
+                - data-lpignore / data-1p-ignore suppress password manager overlays
+              */}
+              <form
+                autoComplete="off"
+                role="presentation"
+                data-form-type="other"
+                onSubmit={(e) => { e.preventDefault(); handleActivate(); }}
               >
-                Confirm & Activate
-              </button>
+                {/* Hidden dummy fields to absorb Safari autofill detection */}
+                <input type="text" name="fakeuser_xz9" autoComplete="nope" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+                <input type="text" name="fakepwd_xz9" autoComplete="nope" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Game Name</label>
+                  <input 
+                    type="search"
+                    name="lotto_gx_928374"
+                    inputMode="text"
+                    autoComplete="nope"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
+                    value={game}
+                    onChange={(e) => setGame(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm touch-manipulation"
+                    style={INPUT_STYLE}
+                    placeholder="Enter game name"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Ticket Price</label>
+                    <input 
+                      ref={priceRef}
+                      type="search"
+                      name="lotto_px_716253"
+                      inputMode="text"
+                      autoComplete="nope"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      data-lpignore="true"
+                      data-1p-ignore="true"
+                      data-form-type="other"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                      style={INPUT_STYLE}
+                      placeholder="e.g. 5"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Tickets</label>
+                    <input 
+                      type="search"
+                      name="lotto_tx_493827"
+                      inputMode="text"
+                      autoComplete="nope"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      data-lpignore="true"
+                      data-1p-ignore="true"
+                      data-form-type="other"
+                      value={totalTickets}
+                      onChange={(e) => setTotalTickets(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg touch-manipulation"
+                      style={INPUT_STYLE}
+                      placeholder="e.g. 50"
+                    />
+                  </div>
+                </div>
+                
+                <button 
+                  type="submit"
+                  className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors"
+                >
+                  Confirm & Activate
+                </button>
+              </form>
             </div>
           )}
 
